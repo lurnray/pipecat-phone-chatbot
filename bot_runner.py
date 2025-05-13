@@ -5,7 +5,10 @@ import shlex
 import subprocess
 from contextlib import asynccontextmanager
 from typing import Any, Dict
-# from pipecat.services.service import BaseBot  # Add this with other imports
+from pipecat.pipeline.pipeline import Pipeline
+from pipecat.pipeline.runner import PipelineRunner
+from pipecat.pipeline.task import PipelineTask, PipelineParams
+from pipecat.processors.frame_processor import FrameProcessor
 
 import aiohttp
 from bot_constants import (
@@ -222,17 +225,14 @@ async def handle_start_request(request: Request) -> JSONResponse:
         raise HTTPException(status_code=400, detail=f"Request processing error: {str(e)}")
 
 
-# async def _handle_bot_completion(self, bot: BaseBot):
-#     """Handle bot completion and log stats"""
-#     if hasattr(bot, 'get_stats'):
-#         stats = bot.get_stats()
-#         print("\n--- Call Summary ---")
-#         print(f"Duration: {stats['duration']:.2f} seconds")
-#         print(f"Silence events: {stats['silence_events']}")
-#         print(f"Unanswered prompts: {stats['unanswered_prompts']}")
-#         print("-------------------\n")
-    
-#     self._bots.pop(bot.call_id, None)
+async def _handle_bot_completion(self, pipeline_task):
+    """Handle pipeline completion and log stats"""
+    if hasattr(pipeline_task, 'get_stats'):  # If your processor tracks stats
+        stats = pipeline_task.get_stats()
+        print("\n--- Call Summary ---")
+        print(f"Duration: {stats['duration']:.2f} seconds")
+        print(f"Silence events: {stats['silence_events']}")
+        print("-------------------\n")
 
 # ----------------- Main ----------------- #
 
